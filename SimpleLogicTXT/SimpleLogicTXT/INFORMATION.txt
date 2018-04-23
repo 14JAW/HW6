@@ -1,0 +1,27 @@
+TODO:
+	Figure out how to use queue. 
+	How to Set up and run Events
+
+IMPORTANT:
+	The files Event.h, Event.cpp, Queue.h, Queue.cpp are not used and are not supposed to be used
+
+
+EX:
+//Command
+	circuit8.txt
+
+	CIRCUIT WhiteBoard
+	INPUT   A    1
+	INPUT   B    2
+	OUTPUT  C    3
+	AND     2ns  1   2   4
+	OR      3ns  2   4   3
+
+
+//Values
+	circuit8_v.txt
+
+	VECTOR WhiteBoard
+	INPUT   A    0   1
+	INPUT   B    0   0
+	INPUT   A    3   0

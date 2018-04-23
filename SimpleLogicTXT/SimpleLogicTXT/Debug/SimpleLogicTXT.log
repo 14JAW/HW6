@@ -1,0 +1,7 @@
+﻿  wire.cpp
+h:\docs\cs1220\hw6\simplelogictxt\simplelogictxt\wire.cpp(20): warning C4018: '>': signed/unsigned mismatch
+h:\docs\cs1220\hw6\simplelogictxt\simplelogictxt\wire.cpp(28): warning C4018: '>': signed/unsigned mismatch
+  simulator.cpp
+  Generating Code...
+  SimpleLogicTXT.vcxproj -> H:\docs\CS1220\HW6\SimpleLogicTXT\Debug\SimpleLogicTXT.exe
+  SimpleLogicTXT.vcxproj -> H:\docs\CS1220\HW6\SimpleLogicTXT\Debug\SimpleLogicTXT.pdb (Partial PDB)

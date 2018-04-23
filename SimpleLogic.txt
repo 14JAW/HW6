@@ -1,0 +1,175 @@
+WIRE.H
+
+#pragma once
+#ifndef WIRE_H
+#define WIRE_H
+
+#include <iostream>
+#include "gate.h"
+
+using namespace std;
+
+class Wire {
+public:
+	//constructor, copy constructor, assignment operator, destructor
+	Wire(string nameString = "", int valueInt = 0);
+	Wire(const Wire& w);
+	Wire& operator=(const Wire& w);
+
+
+	//Mutator
+	void SetName(string nameString = "");
+	void SetValue(int valueInt = 0);
+	void SetHistoryAt(int time = 0, int highLow = 0);
+	void SetDriverAt(Gate& g, int time = 0);
+
+	//Accessor
+	string GetName();
+	int GetValue();
+	int GetHistoryAt(int index = 0);
+	Gate* GetDriverAt(int index = 0);
+
+private:
+	string name;
+	int value;
+	vector<int> history;
+	vector<Gate*> driver;
+};
+#endif WIRE_H
+
+
+
+WIRE.cpp
+
+#include "wire.h"
+
+Wire::Wire(string nameString, int valueInt)
+{
+	name = nameString;
+	value = valueInt;
+	history.at(0) = -1;
+}
+
+void Wire::SetName(string nameString)
+{
+	name = nameString;
+}
+
+void Wire::SetValue(int valueInt) {
+	value = valueInt;
+}
+
+void Wire::SetHistoryAt(int time, int highLow) {
+	if (time > history.size() + 1) {
+		history.resize(time + 1);
+	}
+	history.at(time + 1) = highLow;
+}
+
+void Wire::SetDriverAt(Gate& g, int time) {
+	Gate* gatePtr = g;
+	if (time > driver.size() + 1) {
+		driver.resize(time + 1);
+	}
+
+	driver.at(time + 1) = gatePtr;
+}
+
+
+
+GATE.H
+
+
+#pragma once
+#ifndef GATE_H
+#define GATE_H
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+class Wire;
+
+class Gate {
+public:
+	//Constructor
+	Gate(string typeString, int delayNum, Wire* outputWire, Wire* intputWire1, Wire* inputWire2 = NULL);
+
+	//mutators
+	void SetGateType(string gateType);
+	void SetDelay(int delayNum);
+	void SetInput1(Wire* inputWire1);
+	void SetInput2(Wire* inputWire2);
+	void SetOutput(Wire* outputWire);
+
+	//Accessors
+	string GetGateType();
+	Wire* GetInput1();
+	Wire* GetInput2();
+	Wire* GetOutput();
+	int GetDelay();
+
+private:
+	Wire* input1, input2, output;
+	int delay;
+	string type;
+};
+#endif
+
+
+
+GATE.cpp
+
+#include "wire.h"
+
+using namespace std;
+
+Gate::Gate(string typeString, int delayNum, Wire* outputWire, Wire* inputWire1, Wire* inputWire2) {
+	type = typeString;
+	delay = delayNum;
+	input1 = inputWire1;
+	input2 = inputWire2;
+	output = outputWire;
+}
+
+void Gate::SetGateType(string gateType) {
+
+}
+
+void Gate::SetDelay(int delayNum) {
+	delay = delayNum;
+}
+
+void Gate::SetInput1(Wire* inputWire1) {
+	input1 = inputWire1;
+}
+
+void Gate::SetInput2(Wire* inputWire2) {
+	input2 = inputWire2;
+}
+
+void Gate::SetOutput(Wire* outputWire) {
+	output = outputWire;
+}
+
+
+string Gate::GetGateType() {
+	return type;
+}
+
+int Gate::GetDelay() {
+	return delay;
+}
+
+Wire* Gate::GetInput1() {
+	return input1;
+}
+
+Wire* Gate::GetInput2() {
+	return input2;
+}
+
+Wire* Gate::GetOutput() {
+	return output;
+}

@@ -1,0 +1,5 @@
+﻿  simulator.cpp
+h:\docs\cs1220\hw6\simplelogictxt\simplelogictxt\simulator.cpp(89): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+h:\docs\cs1220\hw6\simplelogictxt\simplelogictxt\simulator.cpp(234): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  SimpleLogicTXT.vcxproj -> H:\docs\CS1220\HW6\SimpleLogicTXT\x64\Debug\SimpleLogicTXT.exe
+  SimpleLogicTXT.vcxproj -> H:\docs\CS1220\HW6\SimpleLogicTXT\x64\Debug\SimpleLogicTXT.pdb (Partial PDB)

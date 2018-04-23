@@ -1,0 +1,111 @@
+	Event SetEvent(Wire* w, int timeVal, char valueChar, int delayVal = 0) {
+
+while (tempValues != "") {		
+			cout << "inside tempValues Parsing" << endl;
+			//This While loop takes inputs from input Values: the _v.txt file
+			inputValues >> tempValues;									//Get the inputs and outputs to set up the wires: Name, Number, and place in vector
+			
+			string wireName;
+			inputValues >> wireName;
+
+			int timeOfChange;
+			inputValues >> timeOfChange;
+			
+			int wireValue;
+			inputValues >> wireValue;
+
+			char wireChar;
+			if (wireValue == 1) {
+				wireChar = '1';
+			}
+			else if (wireValue == 0) {
+				wireChar = '0';
+			}
+			else {
+				wireChar = 'X';
+			}
+
+			Event e;
+			
+
+			if (findWire(wireVector, wireName) != NULL) {	//The wire exists so we make an event for the change in value
+				e.wire = findWire(wireVector, wireName);
+				e.wire->SetHistoryAt(timeOfChange, wireChar);
+				e.wire->history[timeOfChange] = wireChar;
+				e.time = timeOfChange;
+				q.push(e);
+			}
+			else {											//Make an Event that uses the new made wire
+				Wire* w = NULL;
+				e.wire = w;
+				e.wire->SetHistoryAt(timeOfChange, wireChar);
+				e.wire->history[timeOfChange] = wireChar;
+				e.time = timeOfChange;
+				q.push(e);
+			}
+			
+		}
+
+		/*
+		while (tempCom != "") {	
+			cout << "inside tempCom Parsing" << endl;
+			
+						//This While loop takes inputs from inputCommands: the regular (not _v) .txt file
+
+			getline(inputCommands, tempCom);
+			string type;
+			
+			sscanf(tempCom.c_str(), "%s", type);
+			if (tempCom == "INPUT" || tempCom == "OUTPUT") {//Get the inputs and outputs to set up the wires: Name, Number, and place in vector
+				
+				string names;
+				inputCommands >> names;
+
+				int wireNumbers;
+				inputCommands >> wireNumbers;
+				
+				if (wireNumbers > wireVector.size()) {
+					wireVector.resize(wireNumbers);
+				}
+
+				
+				wireVector[wireNumbers]->name = names;
+				wireVector[wireNumbers]->wireNumber = wireNumbers;
+
+			}
+			else {													//Get the Gates: Type, Delay, wire input 1, wire input 2 (if neccessary), and wire output
+				
+				string line = "";
+				getline(inputCommands, line);
+				int delayInt;
+				inputCommands >> delayInt;
+
+
+				int wireNum;
+				inputCommands >> wireNum;
+				g->SetGateType(tempCom); 
+
+
+				g->SetDelay(delayInt);
+
+				//Handle "ns" for nano seconds
+
+				
+				//if the wire exists, use it in the Gate def, else create one.
+				g->SetInput1(wireVector, wireNum);
+
+				if (tempCom != "NOT") {								//The NOT gate Exception
+					inputCommands >> wireNum;
+					g->SetInput2(wireVector, wireNum);
+				}
+
+				inputCommands >> wireNum;
+				g->SetOutput(wireVector, wireNum);
+			}
+		}
+		*/
+
+
+
+
+void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queue q)
