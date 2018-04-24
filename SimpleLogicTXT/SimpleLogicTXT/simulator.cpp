@@ -82,19 +82,26 @@ bool Repeat() {
 	}
 }
 
-void PrintWire(Wire* w) {
+int PrintWire(Wire* w, int& timer) {
 
-	int sizeOfHistory = 0;
-	if (w->history.size() <= 60) {
-		sizeOfHistory = w->history.size();
+	if (w->history.size() > timer) {
+		timer = w->history.size();
 	}
-	else {
+	int sizeOfHistory = timer;
+	//if (w->history.size() <= 60) {
+	//	sizeofhistory = w->history.size();
+	//}
+	/*else {
 		sizeOfHistory = 60;
-	}
+	}*/
 
 	cout << w->name << ": ";
+	char startChar = w->history.at(w->history.size() - 1);
 
 	for (int i = 0; i < sizeOfHistory; i++) {
+		if (w->history.size() < sizeOfHistory){
+			w->history.push_back(startChar);
+		}
 		if (w->history[i] == '1') {
 			cout << "-";
 		}
@@ -106,22 +113,28 @@ void PrintWire(Wire* w) {
 		}
 
 	}
+	if (w->history.size() > timer) {
+		timer = w->history.size();
+	}
 	cout << endl;
+	return timer;
 }
 
-void PrintReport(vector<Wire*> wires) {
+void PrintReport(vector<Wire*>& wires) {
 	int displayTime = 0;
 	for (int i = 0; i < wires.size(); i++) {
 		if (wires[i]->name != "") {
-			PrintWire(wires[i]);
+			if ((i > 0 && wires[i]->name != wires[i - 1]->name) || i == 0) {
+				displayTime = PrintWire(wires[i], displayTime);
+			}
 		}
 	}
-	for (int i = 0; i < displayTime; i++) {
-		if (displayTime % 5 == 0) {
-			cout << displayTime << "    ";
+	for (int i = 0; i <= displayTime; i++) {
+		if ((i % 5) == 0 || i == 0) {
+			cout << i << "    ";
 		}
 	}
-	cout << "pause Hit" << endl;
+	cout << "\npause Hit" << endl;
 	char pause;
 	cin >> pause;
 }
@@ -152,7 +165,11 @@ void ParseInputs(string fileName, vector<Wire*>& wires, vector<Gate*>& gates, Qu
 					while (wires.size() < wireNum){
 						vector<char> history;
 						vector<Gate*> g;
-						Wire* w = new Wire(history, g, wireNum, nameStr);
+						string tempName = "";
+						Wire* w = new Wire(history, g, wires.size(), nameStr);
+						if (wires.size() + 1 < wireNum) {
+							w->name = tempName;
+						}
 						wires.push_back(w);
 					}
 				}
@@ -260,10 +277,12 @@ void ParseInputs(string fileName, vector<Wire*>& wires, vector<Gate*>& gates, Qu
 	instream.close();
 }
 
+
 int main() {
 	bool playing = true;
 	vector<Wire*> wireVector;
 	vector<Gate*> gateVector;
+	int timer = 0;
 	Queue q;
 	while (playing) {
 
@@ -277,47 +296,63 @@ int main() {
 		ParseInputs(inputFile, wireVector, gateVector, q);
 		ParseInputs(inputFileV, wireVector, gateVector, q);
 
-		/*
+		
 		
 
 		//Actual code FIXME ///////////////////////////////////////////////////////////////////////
-		int timer = 0;
-		Event e;
-		while (timer <= 60 && !q.empty()){
+		
+		Wire* w = NULL;
+		char value = '\0';
+		Event e(w, timer, value, 0);
+
+		while (e.time <= 60 && !q.empty()){
 			e = q.top();
 			q.pop();
-			Wire* w = e.wire;
+			w = e.wire;
 			if (e.gateOutChanged()) {
 				int i = 0; 
 				while (i < w->driver.size()) {
 					if (w->driver[i]->ApplyType()) {
-						Event e1;
-						e1.time = w->driver[i]->delay + timer;
+
+						int timer1 = 0;
+						Wire* w1 = NULL;
+						char value1 = '\0';
+						Event e1(w1, timer1, value1, 0);
+
+						e1.time = w->driver[i]->delay + e.time;
 						e1.wire = w->driver[i]->output;
 						
-						int sizer = e1.wire->history.size();
-						e1.wire->history.resize(timer + 1);
+						//////////////////////////////////////////////////////////vvvSet Privous wire history=
+						char startingChar = e1.wire->history[e1.wire->history.size() - 1];
+						int historyIndex = e1.wire->history.size() - 1;
 
-						for (int j = sizer; j < timer; j++) {
-							e1.wire->history[j] = e1.wire->history[sizer - 1];
+						for (int j = historyIndex; j < e.time; j++) {
+							e1.wire->history.push_back(startingChar);
 						}
-						e1.wire->history[timer] = w->driver[i]->GetWireNewValue();
-						e1.value = e1.wire->history[timer];
+						//////////////////////////////////////////////////////////^^^Set Previous wire history 
 
+						//////////////////////////////////////////////////////////vvvSet new value at current time
+						e1.wire->history.push_back(w->driver[i]->GetWireNewValue());
+						e1.value = e1.wire->history[e.time];
+						//////////////////////////////////////////////////////////^^^Set new value at current time
 						q.push(e1);
 					}
 				}
 				//something does change so we need to 
 			}
+			if (q.empty()) {
+				break;
+			}
 			e = q.top();
-			timer = e.time;
 		}
-		*/
+		
 		//Actual code FIXME ///////////////////////////////////////////////////////////////////////
 
 		//option to go again
 		PrintReport(wireVector);//FIXME
 		playing = Repeat();//FIXME
+		wireVector.clear();
+		gateVector.clear();
 
 	}
 	return 0;
