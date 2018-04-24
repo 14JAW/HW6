@@ -121,12 +121,12 @@ void PrintReport(vector<Wire*> wires) {
 			cout << displayTime << "    ";
 		}
 	}
-	cout << endl;
+	cout << "pause Hit" << endl;
 	char pause;
 	cin >> pause;
 }
 
-void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queue q) {
+void ParseInputs(string fileName, vector<Wire*>& wires, vector<Gate*>& gates, Queue& q) {
 
 	ifstream instream;
 	instream.open(fileName);
@@ -149,7 +149,7 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 				int wireNum;
 				instream >> wireNum;//Get Wire Number
 				if (findWire(wires, nameStr) == NULL) {//Insert wire into vector
-					while (wires.size() <= wireNum){
+					while (wires.size() < wireNum){
 						vector<char> history;
 						vector<Gate*> g;
 						Wire* w = new Wire(history, g, wireNum, nameStr);
@@ -157,12 +157,12 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 					}
 				}
 			}
-			else {
-
+			else if (type != ""){
 				int delay;
 				instream >> delay;
-
-				int input1;
+				string useless;
+				instream >> useless;
+				int input1 = 0;
 				instream >> input1;	
 				Wire* wire1 = NULL;
 				if (findWire(wires, input1) == NULL) {
@@ -174,7 +174,7 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 						wire1 = w;
 					}
 				}
-
+				wire1 = findWire(wires, input1);
 
 				int input2 = -1;
 				Wire* wire2 = NULL;
@@ -190,6 +190,7 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 						}
 					}
 				}
+				wire2 = findWire(wires, input2);
 
 				int output;
 				instream >> output;
@@ -203,10 +204,12 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 						wire3 = w;
 					}
 				}
+				wire3 = findWire(wires, output);
 
 				Gate* g = new Gate(wire1, wire3, wire2);
 				g->SetGateType(type);
 				g->delay = delay;
+				gates.push_back(g);
 			}
 		}
 	}
@@ -226,7 +229,7 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 
 			if (findWire(wires, name) == NULL) {
 				vector<char> history;
-				for (int i = 0; i <= time + 1; i++) {
+				for (int i = 0; i < time; i++) {
 						history.push_back('X');
 				}
 				history.push_back(value);
@@ -234,13 +237,18 @@ void ParseInputs(string fileName, vector<Wire*> wires, vector<Gate*> gates, Queu
 				int wireNumber= wires.size();
 				Wire* w = new Wire(history, gates, wireNumber, name, value);
 				wires.push_back(w);
+				Event e(w, time, value, 0);
+				q.push(e);
 			}
-			else{
+			else {
 				Wire* w = findWire(wires, name);
 
 				int i = 0;
-				char startChar = w->history.at(w->history.size() - 1);
-				while (w->history.size() <= time) {
+				char startChar = '\0';
+				if (w->history.size() > 0) {
+					startChar = w->history.at(w->history.size() - 1);
+				}
+				while (w->history.size() < time) {
 					w->history.push_back(startChar);
 				}
 				w->history.push_back(value);
@@ -308,8 +316,8 @@ int main() {
 		//Actual code FIXME ///////////////////////////////////////////////////////////////////////
 
 		//option to go again
-		PrintReport(wireVector);
-		playing = Repeat();
+		PrintReport(wireVector);//FIXME
+		playing = Repeat();//FIXME
 
 	}
 	return 0;

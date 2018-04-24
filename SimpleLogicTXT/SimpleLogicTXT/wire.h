@@ -25,7 +25,6 @@ public:
 	//Accessor
 	string GetName();
 	char GetValue();
-	char GetHistoryAt(int index = 0);
 	Gate* GetDriverAt(int index = 0);
 	int GetWireNumber();
 
